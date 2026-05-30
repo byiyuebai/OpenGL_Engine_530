@@ -1,0 +1,37 @@
+{
+  "image_path": "./block_1.png",
+  "tile_count": [ 8, 8 ],
+  "tile_size": [ 16, 16 ],
+  
+  "tiles": [
+    {
+      "name": "error",
+      "tile_pos": [ 0, 0 ]
+    },
+
+    {
+      "name": "bricks_my",
+      "tile_pos": [ 1, 0 ]
+    },
+    {
+      "name": "stone",
+      "tile_pos": [ 2, 0 ]
+    },
+    {
+      "name": "grass",
+      "tile_pos": [ 3, 0 ]
+    },
+    {
+      "name": "grass_up",
+      "tile_pos": [ 4, 0 ]
+    },
+    {
+      "name": "bricks_mc",
+      "tile_pos": [ 1, 1 ]
+    },
+    {
+      "name": "red",
+      "tile_pos": [ 0, 1 ]
+    }
+  ]
+}
