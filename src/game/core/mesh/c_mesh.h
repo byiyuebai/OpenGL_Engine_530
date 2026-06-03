@@ -64,6 +64,7 @@ private:
 	//顶点更新队列(偏移+顶点数据)
 	std::vector<std::pair<unsigned int, std::array<Vertex, 4>>> updateFacelist;
 };
+
 /*
 区块更新面可以仅修改对应顶点数据,索引必须重构gpu端不能留空位
 
