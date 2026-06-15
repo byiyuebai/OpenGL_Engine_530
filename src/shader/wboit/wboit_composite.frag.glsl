@@ -32,6 +32,9 @@ void main()
     // 标准公式：最终颜色 = 透明颜色 + 不透明颜色 * 剩余透明度
     vec3 finalColor = transparentColor + opaqueColor * revealage;
     
+    
+    //if(gl_FragCoord.x > 400){ finalColor =  vec3(1-finalColor); } // 测试负片
+
     FragColor = vec4(finalColor, 1.0);
     
         // 调试：显示各个缓冲的值

@@ -32,5 +32,7 @@ void main()
     vec3 finalColor = clampColor(ambient + diffuse);
     finalColor = pow(finalColor, vec3(1.0/2.2));
 
-    FragColor = tex1 * vec4(finalColor, 1.0);
+    vec4 out1 = tex1 * vec4(finalColor, 1.0);
+
+    FragColor = out1;
 }
