@@ -13,6 +13,7 @@ public:
 
 	// 启用着色器程序（核心接口）
 	void use() const;
+	void unuse() const;
 
 	// 获取着色器程序 ID（对外只读）
 	unsigned int getID() const;

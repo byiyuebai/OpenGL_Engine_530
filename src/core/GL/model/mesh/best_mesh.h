@@ -51,7 +51,6 @@ protected:
 	VertexArray* VAO = nullptr;
 	VertexBuffer* VBO = nullptr;
 	ElementBuffer* EBO = nullptr;
-	//VertexBufferLayout* layout = nullptr;
 private:
 
 };

@@ -43,7 +43,8 @@ void main()
     
     // 累加颜色和权重
     // 输出格式：rgb累加值，alpha累加值
-    Accumulation = vec4(premultipliedColor * weight, alpha * weight);
+
+    Accumulation = vec4(premultipliedColor*weight, alpha * weight);
     
     // 可选：添加最大权重限制，避免数值溢出
     // Accumulation = min(Accumulation, 100.0);

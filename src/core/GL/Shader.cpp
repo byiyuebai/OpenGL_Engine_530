@@ -20,7 +20,7 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath, c
 		ID = 0;
 		return;
 	}
-
+	ID = glCreateProgram();
 	unsigned int vertex, fragment, geometry;
 
 	const char* vShaderCode = vertexCode.c_str();
@@ -44,13 +44,15 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath, c
 		glShaderSource(geometry, 1, &gShaderCode, NULL);
 		glCompileShader(geometry);
 		checkCompileErrors(geometry, "GEOMETRY");
+		
+		glAttachShader(ID, geometry);
 	}
 
 
-	ID = glCreateProgram();
+
 	glAttachShader(ID, vertex);
 	glAttachShader(ID, fragment);
-	glAttachShader(ID, geometry);
+
 	glLinkProgram(ID);
 	checkCompileErrors(ID, "PROGRAM");
 
@@ -73,6 +75,14 @@ void Shader::use() const {
 
 		glUseProgram(ID);
 		currentShaderID = ID;
+	}
+}
+
+void Shader::unuse() const
+{
+	if (currentShaderID == ID) {
+		glUseProgram(0);
+		currentShaderID = 0;
 	}
 }
 

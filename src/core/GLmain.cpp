@@ -23,7 +23,7 @@ void GLmain()
 	double deltatime = 0;
 
 	Timer timer;
-	FPSLimiter fpsLimiter(6000.0);
+	FPSLimiter fpsLimiter(30000.0);
 
 	glm::ivec2 window_size = InputManager::GetInstance().GetWindowSize();
 

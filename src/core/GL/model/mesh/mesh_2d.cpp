@@ -34,12 +34,14 @@ void Mesh_2D::Draw(Shader& shader) {
 	}
 	renderer->Draw(*VAO, shader);
 }
-void Mesh_2D::Clean()
-{
+void Mesh_2D::unTexDraw(Shader& shader){
+	Renderer* renderer = &Renderer::Instance();
+	renderer->Draw(*VAO, shader);
+}
+void Mesh_2D::Clean(){
 	delete VAO;
 	delete VBO;
 	delete EBO;
-	//delete layout;
 }
 
 void Mesh_2D::CleanTextures()

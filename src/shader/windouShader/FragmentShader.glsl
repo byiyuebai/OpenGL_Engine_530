@@ -1,7 +1,7 @@
 ﻿#version 330 core
 
 
-layout (location = 0) out vec4 FragColor;
+out vec4 FragColor;
 
 in vec3 Normal;
 in vec2 TexCoord;
@@ -13,10 +13,8 @@ vec3 clampColor(vec3 color) {return clamp(color, 0.0, 1.0);}
 
 void main()
 {
-     vec4 tex1 = texture(Texture1, TexCoord);
-
-     if(tex1.a < 0.01) discard; // 透明度过低的像素直接丢弃
-
+    vec4 tex1 = texture(Texture1, TexCoord);
+    if(tex1.a < 0.1) discard; // 透明度过低的像素直接丢弃
     // ===== 1. 光照参数优化（核心：降低环境光强度，可选：柔化颜色）=====
     vec3 lightDir = normalize(vec3(0.5, 1.0, 1.0));
     float ambientStrength = 0.4;
@@ -32,7 +30,5 @@ void main()
     vec3 finalColor = clampColor(ambient + diffuse);
     finalColor = pow(finalColor, vec3(1.0/2.2));
 
-    vec4 out1 = tex1 * vec4(finalColor, 1.0);
-
-    FragColor = out1;
+    FragColor = tex1 * vec4(finalColor, 1.0);
 }

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "GL/Camera.h"
 #include "Chunk.h"
 #include "ElementBuffer.h"
@@ -10,74 +11,104 @@
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
+#include "UniformBuffer.h"
 #include "World.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/vec3.hpp>
 #include "mesh_2d.h"
 #include "FrameBuffer.h"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/vec3.hpp>
+
 class CameraController;
+
 namespace Test {
-	class FBOTest :public Test {
-	public:
-		FBOTest(GLFWwindow* window);
-		~FBOTest();
+    class FBOTest : public Test {
+    public:
+        FBOTest(GLFWwindow* window);
+        ~FBOTest();
 
-		void update(double deltatime);
+        void createAxisLines();
 
-		void Render();
-		void GuiRender();
-	private:
-		GLFWwindow* window;
-		double deltatime;
+        void createFramebuffers(int width, int height);
 
-		Camera* camera;
+        void createShaders();
 
-		Mesh_2D* quadMesh;
+        void createTestMeshes();
 
+        void createUniformBuffers();
 
-		FrameBuffer* baseFBO;
+        void update(double deltatime);
+        void Render();
+        void updateViewUniforms();
+        void GuiRender();
 
-		FrameBuffer* transparentFBO;
+        void renderCrosshair();
 
-		Texture* opaqueColor;
-		Texture* accumTex;
-		Texture * revealTex;
+        void renderSettingsWindow();
 
-		Shader* lineShader;
-		Shader* chunkShader;
+        void renderDebugWindow();
 
-		Shader* transparentShader_a;
-		Shader* transparentShader_r;
+        void setBlockAtCamera(const std::string& blockName);
 
-		Shader* compositeShader;
+    private:
+        // ==================== 窗口相关 ====================
+        GLFWwindow* window;
+        double deltatime;
 
-		L_Mesh* mesh_line;
+        // ==================== 摄像机 ====================
+        Camera* camera;
+        std::shared_ptr<CameraController> camera_controller;
 
-		World* world;
+        // ==================== Uniform Buffers ====================
+        UniformBuffer* UBO_Proj;   // 投影矩阵，绑定点 0
+        UniformBuffer* UBO_View0;  // 视图矩阵，绑定点 1
+        UniformBuffer* UBO_View1;  // 视图矩阵(仅旋转)，绑定点 2
 
-		M_Mesh* triangleMesh;
+        // ==================== 着色器 ====================
+        Shader* lineShader;
+        Shader* chunkShader;
+        Shader* transparentShader_a;   // 透明物体累积
+        Shader* transparentShader_r;   // 透明物体揭示度
+        Shader* compositeShader;       // 最终合成
 
-		void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+        // ==================== 帧缓冲 ====================
+        FrameBuffer* opaqueFBO;        // 不透明物体 FBO
+        FrameBuffer* transparentFBO;   // 透明物体 FBO
 
-		std::shared_ptr<CameraController> camera_controller;
+        // ==================== 纹理 ====================
+        Texture* opaqueColor;   // 不透明颜色纹理
+        Texture* accumTex;      // 累积纹理
+        Texture* revealTex;     // 揭示度纹理
 
-		glm::vec3 clearColor;
+        // ==================== 网格 ====================
+        Mesh_2D* quadMesh;      // 全屏四边形（用于合成）
+        L_Mesh* mesh_line;      // 坐标轴线条
+        M_Mesh* triangleMesh;   // 透明三角形（测试用）
 
-		bool is_set_air = false;
-		bool is_set_block = false;
+        // ==================== 世界 ====================
+        World* world;
 
-		float block_cd = 0.0f;
+        // ==================== 状态标志 ====================
+        glm::vec3 clearColor;
+        bool is_set_air = false;
+        bool is_set_block = false;
+        float block_cd = 0.0f;
 
-		void setupQuad();
-		void updateShaderProjection(const glm::mat4& projection);
-	};
+        // ==================== 回调函数 ====================
+        void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
+        // ==================== 辅助函数 ====================
+        void setupQuad();   
+		void updateShaderProjection(const glm::mat4& projection); // 更新着色器投影矩阵
+
+        void processBlockPlacement();       // 处理方块放置
+        void processBlockRemoval();         // 处理方块移除
+        void renderOpaquePass();            // 渲染不透明阶段
+        void renderTranslucentTestObjects();// 绘制传统透明物体测试
+        void renderTransparentPass();       // 渲染透明阶段
+        void renderAccumulationPass();      // 渲染累积通道
+        void renderRevealagePass();         // 渲染揭示度通道
+        void renderCompositePass();         // 最终合成阶段
+    };
 }
-
-glm::vec3 getCameraLookAtCenter(Camera* camera);
-/*
-深度默认最远为1，最近为0
-深度反转后，最远为0，最近为1，这样可以提高深度精度，尤其是在远距离场景中。
-*/

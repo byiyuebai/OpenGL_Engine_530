@@ -14,6 +14,7 @@ public:
 
 
     void Draw(Shader& shader);
+	void unTexDraw(Shader& shader);
 
     void Clean();
     void CleanTextures();

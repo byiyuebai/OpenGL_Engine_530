@@ -6,11 +6,14 @@ layout (location = 2) in vec2 aTexCoord;
 out vec2 TexCoord;
 out float ViewZ;
 
-uniform mat4 projection;
-uniform mat4 view; //这玩意仅需要传入3x3矩阵(去除平移)
 uniform vec3 chunkRelativePos;
 
-
+layout (std140) uniform Proj {
+    mat4 projection;
+};
+layout (std140) uniform View {
+    mat4 view;
+};
 
 void main()
 {
