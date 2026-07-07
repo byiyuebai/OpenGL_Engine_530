@@ -3,7 +3,6 @@
 VertexArray::VertexArray()
 {
 	glGenVertexArrays(1, &VAO_ID);
-	Bind();
 }
 
 VertexArray::~VertexArray()
@@ -54,10 +53,9 @@ void VertexArray::AddInstanceBuffer(const VertexBuffer& vb, const VertexBufferLa
 }
 
 void VertexArray::Bind() const {
-	//std::cout << "Bind VAO: " << VAO_ID << std::endl;
 	glBindVertexArray(VAO_ID);
 }
-void VertexArray::Unbind() const {
+void VertexArray::Unbind() {
 	glBindVertexArray(0);
 }
 

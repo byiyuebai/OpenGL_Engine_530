@@ -2,24 +2,8 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include <glad/glad.h>
-void Renderer::SetDrawMode(DrawMode mode)
-{
-	switch (mode) {
-	case DrawMode::Opaque:
-		glEnable(GL_DEPTH_TEST);
-		glDepthMask(GL_TRUE); // 启用深度写入
-		glDisable(GL_BLEND);
-		break;
-	case DrawMode::Translucent:
-		glEnable(GL_DEPTH_TEST);
-		glDepthMask(GL_FALSE); // 禁止深度写入
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // 标准 alpha 混合
-		break;
-	default:
-		break;
-	}
-}
+
+
 void Renderer::SetCullFace(bool onoff)
 {
 	if (onoff) {
@@ -31,11 +15,23 @@ void Renderer::SetCullFace(bool onoff)
 		glDisable(GL_CULL_FACE);
 	}
 }
+void Renderer::SetPolygonMode(GLenum face, GLenum mode)
+{
+/*
+face	GL_FRONT	只影响正面多边形
+		GL_BACK	只影响背面多边形
+		GL_FRONT_AND_BACK	最常用，影响所有多边形
+
+mode	GL_FILL	默认值，填充整个多边形（实体渲染）
+		GL_LINE	只绘制多边形的边缘线框
+		GL_POINT	只绘制多边形的顶点（点云效果）
+ */
+	glPolygonMode(face, mode);
+}
 void Renderer::Draw(const VertexArray& vao, const Shader& shader) {
 
 	shader.use();
 	vao.Bind();
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
 	glDrawElements(GL_TRIANGLES, vao.GetCurrentIndexCount(), GL_UNSIGNED_INT, 0);
 }
 void Renderer::DrawInstanced(
@@ -61,14 +57,7 @@ void Renderer::DrawLine(const VertexArray& vao, const Shader& shader) {
 
 	glDrawElements(GL_LINES, vao.GetCurrentIndexCount(), GL_UNSIGNED_INT, 0);
 }
-void Renderer::DrawTranslucent(const VertexArray& vao, const Shader& shader) {
 
-	shader.use();
-	vao.Bind();
-
-	//提交绘制
-
-}
 
 void Renderer::Clear(unsigned int buffers) {
 	glClear(buffers);

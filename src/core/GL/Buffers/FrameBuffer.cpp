@@ -220,6 +220,7 @@ void FrameBuffer::Resize(int width, int height)
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_Width, m_Height);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	}
+	Unbind();
 }
 
 void FrameBuffer::Clean()

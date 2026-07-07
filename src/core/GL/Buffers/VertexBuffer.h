@@ -6,7 +6,7 @@ public:
 	~VertexBuffer();
 
 	void Bind() const;
-	void UnBind() const;
+	static void UnBind();
 
 	void Clean() const;
 

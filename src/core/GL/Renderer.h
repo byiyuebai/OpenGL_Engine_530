@@ -1,12 +1,10 @@
 ﻿#pragma once
+#include <glad/glad.h>
 class VertexArray;
 class ElementBuffer;
 class Shader;
 
-enum class DrawMode {
-	Opaque,
-	Translucent
-};
+
 class Renderer {
 public:
 
@@ -14,12 +12,11 @@ public:
 		static Renderer instance;
 		return instance;
 	}
-	void SetDrawMode(DrawMode mode);
 	void SetCullFace(bool onoff);
+	void SetPolygonMode(GLenum face, GLenum mode);
 	void Draw(const VertexArray& vao, const Shader& shader);
 	void DrawInstanced(const VertexArray& vao, const Shader& shader, int instanceCount);
 	void DrawLine(const VertexArray& vao, const Shader& shader);
-	void DrawTranslucent(const VertexArray& vao, const Shader& shader);
 
 	void Clear(unsigned int buffers);
 

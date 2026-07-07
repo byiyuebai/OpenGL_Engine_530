@@ -65,13 +65,14 @@ void GLmain()
 	//控制器管理器
 	ControllerManager& controller_manager = ControllerManager::GetInstance();
 
-
+	glfwSwapInterval(1);
 	Test::Test* currentTest = nullptr;
 
 	Test::TestMenu* testMenu = new Test::TestMenu(currentTest);
 	currentTest = testMenu;
 
 	//注册测试
+	testMenu->RegisterTest<Test::OLDTest>("OLD Test", window);
 	testMenu->RegisterTest<Test::FBOTest>("FBO Test", window);
 
 	while (!glfwWindowShouldClose(window)) {

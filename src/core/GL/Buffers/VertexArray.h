@@ -19,7 +19,7 @@ public:
 	void AddInstanceBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout, unsigned int divisor);
 
 	void Bind() const;
-	void Unbind() const;
+	static void Unbind();
 
 	void Clean() const;
 

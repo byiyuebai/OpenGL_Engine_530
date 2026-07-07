@@ -1,10 +1,11 @@
 ﻿#include "ElementBuffer.h"
 ElementBuffer::ElementBuffer(const void* data, unsigned int count, int gl_type) {
+	glBindVertexArray(0);//确保没有VAO绑定
 
 	glGenBuffers(1, &EBO_ID);
 	Bind();
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, gl_type);
-
+	UnBind();
 	max_count = count;
 }
 
@@ -16,7 +17,7 @@ void ElementBuffer::Bind() const {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_ID);
 }
 
-void ElementBuffer::UnBind() const {
+void ElementBuffer::UnBind() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
@@ -35,7 +36,6 @@ void ElementBuffer::ResetData(const void* data, unsigned int size, int gl_type)
 {
 	Bind();
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(unsigned int), data, gl_type);
-
 	max_count = size;
 }
 
@@ -64,49 +64,6 @@ void ElementBuffer::Expand(unsigned int expand_count, int gl_type) {
     // 解绑
     glBindBuffer(GL_COPY_READ_BUFFER, 0);
     glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-    Bind();
 }
-
-
-//void ElementBuffer::Expand(unsigned int expand_count, int gl_type)
-//{
-//	if (!expand_count) return;
-//
-//	Bind();
-//	unsigned int new_count = max_count + expand_count;
-//	unsigned int old_size = max_count * sizeof(unsigned int);
-//	unsigned int new_size = new_count * sizeof(unsigned int);
-//
-//	// 临时缓冲
-//	GLuint staging;
-//	glGenBuffers(1, &staging);
-//	glBindBuffer(GL_COPY_WRITE_BUFFER, staging);
-//	glBufferData(GL_COPY_WRITE_BUFFER, old_size, nullptr, GL_STATIC_COPY);
-//
-//	// 拷贝旧数据
-//	glBindBuffer(GL_COPY_READ_BUFFER, EBO_ID);
-//	glCopyBufferSubData(
-//		GL_COPY_READ_BUFFER,
-//		GL_COPY_WRITE_BUFFER,
-//		0, 0, old_size
-//	);
-//
-//	// 原地扩容（ID 不变）
-//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, new_size, nullptr, gl_type);
-//
-//	// 拷回旧数据
-//	glCopyBufferSubData(
-//		GL_COPY_WRITE_BUFFER,
-//		GL_COPY_READ_BUFFER,
-//		0, 0, old_size
-//	);
-//
-//	// 清理
-//	glDeleteBuffers(1, &staging);
-//	glBindBuffer(GL_COPY_READ_BUFFER, 0);
-//	glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-//
-//	max_count = new_count;
-//}
 
 unsigned int ElementBuffer::GetMaxCount() const { return max_count; }

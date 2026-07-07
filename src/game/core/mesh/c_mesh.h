@@ -37,12 +37,6 @@ public:
 	void buildVertexBuffer();
 	void expandVBOEBO(unsigned int face_count);
 
-
-
-	//===========================================================================
-	void ResetMesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures);
-	void deleteface(glm::ivec4 pos);
-	//===========================================================================
 	bool init = false;
 private:
 	VertexBufferLayout* layout = nullptr;

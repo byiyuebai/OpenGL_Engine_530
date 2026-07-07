@@ -283,8 +283,7 @@ void World::updateRenderChunks() {
 	}
 }
 
-void World::addRenderChunk(Chunk* chunk)
-{
+void World::addRenderChunk(Chunk* chunk){
 	if (chunk == nullptr) { return; }
 
 	glm::ivec3 chunkPos = chunk->getChunkPos();

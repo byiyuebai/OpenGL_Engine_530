@@ -7,7 +7,6 @@ C_Mesh::C_Mesh(std::vector<Texture*>& textures) {
 
 
 	this->textures = textures;
-
 	this->textures.resize(5, nullptr);
 
 	type = MeshType::VERTEX;
@@ -31,9 +30,9 @@ C_Mesh::~C_Mesh() {
 
 void C_Mesh::initGPU()
 {
+
 	VAO = new VertexArray();
 	VBO = new VertexBuffer(nullptr, 0 * sizeof(Vertex), GL_DYNAMIC_DRAW);
-
 	EBO = new ElementBuffer(nullptr, 0, GL_DYNAMIC_DRAW);
 
 	layout = new VertexBufferLayout();
@@ -182,49 +181,8 @@ void C_Mesh::buildVertexBuffer()
 void C_Mesh::expandVBOEBO(unsigned int face_count)
 {
 	if(face_count==0) return;
-	VAO->Bind();
 	VBO->Expand(face_count * 4 * sizeof(Vertex), GL_DYNAMIC_DRAW);
 	EBO->Expand(face_count * 6, GL_DYNAMIC_DRAW);
 
 	VAO->AddBuffer(*VBO, *EBO, *layout);
-}
-//=============================================
-//没有使用
-void C_Mesh::ResetMesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures)
-{
-	if (!textures.empty()) {
-		for (const auto& tex : textures) {
-			this->textures.push_back(tex);
-		}
-	}
-
-
-	VBO->ResetData(vertices.data(), vertices.size() * sizeof(Vertex), GL_DYNAMIC_DRAW);
-	EBO->ResetData(indices.data(), indices.size(), GL_DYNAMIC_DRAW);
-	VAO->SetCurrentIndexCount(indices.size());
-
-	maxFaceCount = indices.size() / 6;
-
-	while (!freeFaceSlots.empty()) {
-		freeFaceSlots.pop();
-	}
-
-	for (unsigned int i = maxFaceCount; i >0; i--) {
-		freeFaceSlots.push(i-1);
-	}
-}
-
-//坏的不能用
-void C_Mesh::deleteface(glm::ivec4 pos)
-{
-	auto slotIt = faceToSlots.find(pos);
-	if (slotIt == faceToSlots.end()) {
-		std::wcerr << L"\033[31m[ERROR]\033[0m [c_mesh] 尝试删除不存在的面，位置：" << pos.x << "," << pos.y << "," << pos.z << "，面索引：" << pos.w << std::endl;
-		return;
-	}
-	unsigned int faceIndex = slotIt->second;
-	faceToSlots.erase(slotIt);
-	faceToIndx.erase(pos);
-	freeFaceSlots.push(faceIndex);
-
 }

@@ -6,7 +6,7 @@ public:
 	~ElementBuffer();
 
 	void Bind() const;
-	void UnBind() const;
+	static void UnBind();
 
 	void Clean() const;
 
@@ -22,3 +22,4 @@ private:
 	unsigned int EBO_ID;
 	unsigned int max_count;
 };
+//EBO的所有bind操作都需要确保VAO没有绑定或者已经绑定了正确的VAO，否则会导致数据错误。

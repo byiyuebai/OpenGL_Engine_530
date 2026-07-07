@@ -1,9 +1,11 @@
 ﻿#include "VertexBuffer.h"
 VertexBuffer::VertexBuffer(const void* data, unsigned int size, int gl_type) {
+	glBindVertexArray(0);//确保没有VAO绑定
+
 	glGenBuffers(1, &VBO_ID);
 	Bind();
 	glBufferData(GL_ARRAY_BUFFER, size, data, gl_type);
-
+	UnBind();
 	max_size = size;
 }
 
@@ -15,7 +17,7 @@ void VertexBuffer::Bind() const {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);
 }
 
-void VertexBuffer::UnBind() const {
+void VertexBuffer::UnBind() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -61,7 +63,4 @@ void VertexBuffer::Expand(unsigned int expand_size, int gl_type)
 
 	glBindBuffer(GL_COPY_READ_BUFFER, 0);
 	glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-
-	// 恢复绑定当前VBO
-	Bind();
 }
