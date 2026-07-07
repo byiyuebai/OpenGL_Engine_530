@@ -5,9 +5,8 @@
 #include <unordered_map> // 用于 std::unordered_map
 #include <glm/glm.hpp>
 #include <mutex>        // 用于 std::mutex
-#include "Texture.h"
+#include "imageTexture.h"
 #include "TextureAtlas.h"
-
 
 class TextureManager final {
 private:
@@ -16,7 +15,8 @@ private:
 	static std::mutex mtx;
 
 	// 存储文件路径和指向管理纹理的指针映射。
-	std::unordered_map<std::string, Texture*> textures_;
+	std::unordered_map<std::string, Texture*> textures_image;
+	std::unordered_map<std::string, Texture*> textures_atlas;
 
 public:
 	TextureManager() = default;

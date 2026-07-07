@@ -12,7 +12,6 @@ TextureAtlas* LoadTextureAtlas::loadTextureAtlas(const std::string& jsonPath)
 	// 1. 获取父目录（目录路径）
 	std::filesystem::path dirPath = pathObj.parent_path();
 
-
 	// 1. 打开JSON文件（使用std::ifstream）
 	std::ifstream jsonFile(jsonPath);
 	if (!jsonFile.is_open()) {

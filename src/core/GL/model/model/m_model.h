@@ -8,7 +8,7 @@
 #include <assimp/mesh.h>
 #include <glm/fwd.hpp>
 #include <string>
-#include <Texture.h>
+#include <imageTexture.h>
 #include <unordered_map>
 
 class Model {

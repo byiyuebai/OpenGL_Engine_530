@@ -10,7 +10,7 @@ TextureAtlas::TextureAtlas(const std::string& path, glm::ivec2 tileCount, glm::i
 
 	stbi_set_flip_vertically_on_load(true);
 	this->path = path;
-	data = stbi_load(path.c_str(), &spec.width, &spec.height, &nrChannels, 0);
+	unsigned char* data = stbi_load(path.c_str(), &spec.width, &spec.height, &nrChannels, 0);
 	if (!data) {
 		std::wcerr << L"\033[31m[ERROR]\033[0m 纹理加载失败！" << std::endl;
 		std::wcerr << L"[->]文件路径: " << path.c_str() << std::endl;
@@ -30,7 +30,7 @@ TextureAtlas::~TextureAtlas()
 
 void TextureAtlas::loadToGPU()
 {
-	if (!data || isLoadGPU) {
+	if (isLoadGPU) {
 		return;
 	}
 	glBindTexture(GL_TEXTURE_2D, textureID);

@@ -1,35 +1,18 @@
-﻿#include "Texture.h"
+﻿#include "imageTexture.h"
 #include "stb_image.h"
 #include <iostream>
 #include <vector>
 
-Texture::Texture()
-	: textureID(0)
-	, path("")
-	, data(nullptr)
-	, nrChannels(-1)
-	, isLoadGPU(false)
-	, type(TextureType::opaque)
-{
-	spec.width = -1;
-	spec.height = -1;
 
-	glGenTextures(1, &textureID);
-}
 
-Texture::Texture(const std::string path, TextureType type)
-	: textureID(0)
-	, path(path)
-	, data(nullptr)
-	, nrChannels(-1)
-	, isLoadGPU(false)
-	, type(type)
+ImageTexture::ImageTexture(const std::string path, TextureType type)
+	: Texture(), path(path), type(type)
 {
 	spec.width = -1;
 	spec.height = -1;
 
 	stbi_set_flip_vertically_on_load(true);
-	data = stbi_load(path.c_str(), &spec.width, &spec.height, &nrChannels, 0);
+	unsigned char* data = stbi_load(path.c_str(), &spec.width, &spec.height, &nrChannels, 0);
 
 	// 检查加载是否失败
 	if (!data) {
@@ -41,21 +24,21 @@ Texture::Texture(const std::string path, TextureType type)
 		nrChannels = -1;
 		return;
 	}
-	glGenTextures(1, &textureID);
-	loadToGPU();
+	loadToGPU(data);
 }
 
-Texture::~Texture() {
-	Clean();
+ImageTexture::~ImageTexture(){
+	//父类析构函数会调用Clean()
 }
 
-void Texture::loadToGPU()
+
+void ImageTexture::loadToGPU(unsigned char* data)
 {
-	if (!data || isLoadGPU) {
+	if (isLoadGPU) {
 		return;
 	}
 
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	Texture::bind();
 
 	/*环绕模式
 	GL_TEXTURE_WRAP_S S 轴（X 轴）
@@ -89,7 +72,7 @@ void Texture::loadToGPU()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	//// 各向异性过滤（保留，不影响核心问题）
+	//// 各向异性过滤
 	//GLfloat maxAnisotropy;
 	//glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &maxAnisotropy);
 	//GLfloat anisotropyLevel = 8.0f;
@@ -105,6 +88,7 @@ void Texture::loadToGPU()
 		format = GL_RGBA;
 
 	GLenum internalFormat = GL_RGB8;
+
 	if (type == TextureType::translucent) {
 		internalFormat = GL_RGBA8;
 	}
@@ -113,75 +97,7 @@ void Texture::loadToGPU()
 	// 自动生成 mipmap
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	glBindTexture(GL_TEXTURE_2D, 0);
-	isLoadGPU = true;
+	Texture::unbind();
 
-	hasownData = true;// 默认情况下，Texture对象拥有自己的数据
-}
-
-void Texture::createEmptyTexture(TextureSpec spec,bool hasownData)
-{
-	this->spec = spec;
-
-	bind();
-
-	// mipmap设置只有基础层
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-	// 设置默认参数
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, spec.minFilter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, spec.magFilter);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, spec.wrapS);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, spec.wrapT);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, spec.internalFormat, spec.width, spec.height, 0, spec.format, spec.type, nullptr);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	isLoadGPU = true;
-
-	this->hasownData = hasownData;
-}
-
-void Texture::Clean() {
-
-	if (isLoadGPU && textureID != 0) {
-		glDeleteTextures(1, &textureID);
-	}
-
-	// 释放CPU端数据
-	if (data) {
-		stbi_image_free(data);
-		// 注意：data是mutable的，但Clean是const
-		// 如果编译器报错，需要把data声明为mutable
-	}
-}
-
-void Texture::bind()
-{
-
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	
-}
-
-void Texture::unbind()
-{
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void Texture::activeTex(unsigned int unit)
-{
-	glActiveTexture(GL_TEXTURE0 + unit);
-}
-
-void Texture::setID(unsigned int id)
-{
-	// 修复：先清理旧纹理
-	if (isLoadGPU && textureID != 0) {
-		glDeleteTextures(1, &textureID);
-	}
-
-	textureID = id;
 	isLoadGPU = true;
 }

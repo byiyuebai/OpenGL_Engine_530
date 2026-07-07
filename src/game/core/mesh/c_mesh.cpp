@@ -88,13 +88,6 @@ void C_Mesh::Clean()
 	if(layout){delete layout;}
 }
 
-void C_Mesh::CleanTextures()
-{
-	for (int i = 0; i < textures.size(); i++) {
-		TextureManager::getInstance()->unloadTexture(textures[i]->getPath());
-	}
-}
-
 void C_Mesh::SetTexture(std::vector<std::pair<TextureSlot, Texture*>>& data)
 {
 	for (const auto& pair : data) {

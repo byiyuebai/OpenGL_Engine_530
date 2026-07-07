@@ -1,6 +1,6 @@
 #include "FrameBuffer.h"
 
-#include "Texture/Texture.h"
+#include "Texture/Texture_base.h"
 #include <iostream>
 
 FrameBuffer::FrameBuffer(int width, int height) : m_Width(width), m_Height(height), m_DepthTexture(nullptr), m_DepthRBO(0), m_HasDepthTexture(false), m_HasDepthRBO(false)
@@ -34,7 +34,8 @@ Texture* FrameBuffer::AddColorAttachment(GLenum internalFormat, GLenum format, G
 	spec.wrapS = GL_CLAMP_TO_EDGE;
 	spec.wrapT = GL_CLAMP_TO_EDGE;
 
-	tex->createEmptyTexture(spec);
+	tex->setSpec(spec);
+	tex->loadToGPU();
 
 	// 附加到 FBO
 	GLenum attachment = GL_COLOR_ATTACHMENT0 + m_ColorTextures.size();
@@ -72,7 +73,8 @@ Texture* FrameBuffer::AddDepthTexture()
 	spec.wrapS = GL_CLAMP_TO_EDGE;
 	spec.wrapT = GL_CLAMP_TO_EDGE;
 	// 创建空纹理
-	m_DepthTexture->createEmptyTexture(spec);
+	m_DepthTexture->setSpec(spec);
+	m_DepthTexture->loadToGPU();
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthTexture->getID(), 0);
 
@@ -155,7 +157,6 @@ Texture* FrameBuffer::GetDepthTexture() const
 
 void FrameBuffer::Resize(int width, int height)
 {
-	//if (width == m_Width && height == m_Height) return;
 
 	m_Width = width;
 	m_Height = height;
@@ -181,7 +182,8 @@ void FrameBuffer::Resize(int width, int height)
 			spec.wrapS = tex->getSpec().wrapS;
 			spec.wrapT = tex->getSpec().wrapT;
 
-			tex->createEmptyTexture(spec);
+			tex->setSpec(spec);
+			tex->loadToGPU();
 
 			// 重新附加到 FBO
 			GLenum attachment = GL_COLOR_ATTACHMENT0 + count++;
@@ -204,7 +206,8 @@ void FrameBuffer::Resize(int width, int height)
 		spec.wrapS = m_DepthTexture->getSpec().wrapS;
 		spec.wrapT = m_DepthTexture->getSpec().wrapT;
 		// 创建空纹理
-		m_DepthTexture->createEmptyTexture(spec);
+		m_DepthTexture->setSpec(spec);
+		m_DepthTexture->loadToGPU();
 
 		// 重新附加深度纹理
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthTexture->getID(), 0);

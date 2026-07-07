@@ -23,7 +23,7 @@ void GLmain()
 	double deltatime = 0;
 
 	Timer timer;
-	FPSLimiter fpsLimiter(30000.0);
+	FPSLimiter fpsLimiter(6000.0);
 
 	glm::ivec2 window_size = InputManager::GetInstance().GetWindowSize();
 
@@ -66,15 +66,12 @@ void GLmain()
 	ControllerManager& controller_manager = ControllerManager::GetInstance();
 
 
-
-
 	Test::Test* currentTest = nullptr;
 
 	Test::TestMenu* testMenu = new Test::TestMenu(currentTest);
 	currentTest = testMenu;
 
 	//注册测试
-	testMenu->RegisterTest<Test::McTest2>("Mc Test 2", window);
 	testMenu->RegisterTest<Test::FBOTest>("FBO Test", window);
 
 	while (!glfwWindowShouldClose(window)) {
@@ -84,8 +81,9 @@ void GLmain()
 		deltatime = timer.DeltaTime();
 
 
-		//控制器管理器
-		controller_manager.UpdateAllController(deltatime);
+		glfwPollEvents(); // 轮询窗口、键鼠等事件，响应关闭、按键、鼠标操作。
+		controller_manager.UpdateAllController(deltatime); //更新控制器管理器
+		InputManager::GetInstance().update(); // 更新输入状态（重置一次性输入，如鼠标位移、滚轮）
 
 		ImGui_ImplOpenGL3_NewFrame(); // 渲染器新帧（绑定 OpenGL 资源）
 		ImGui_ImplGlfw_NewFrame();    // 平台新帧（更新输入：鼠标/键盘/窗口大小）
@@ -107,20 +105,13 @@ void GLmain()
 
 		}
 
-
-
 		// 5. 生成 ImGui 绘制数据
 		ImGui::Render();
 		// 6. 渲染 ImGui 到屏幕
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-
-		InputManager::GetInstance().update();// 更新输入状态（重置一次性输入，如鼠标位移、滚轮）
-
 		// 交换前后双缓冲
 		glfwSwapBuffers(window);
-		// 轮询窗口、键鼠等事件，响应关闭、按键、鼠标操作。
-		glfwPollEvents();
 	}
 
 	ImGui_ImplOpenGL3_Shutdown();

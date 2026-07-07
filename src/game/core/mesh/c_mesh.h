@@ -15,8 +15,6 @@
 class Texture;
 class C_Mesh : public Mesh {
 public:
-	//基类:std::vector<int>indices
-
 	std::vector<Texture*> textures;
 
 	C_Mesh(std::vector<Texture*>& textures);
@@ -30,7 +28,6 @@ public:
 	void Draw(Shader& shader);
 
 	void Clean();
-	void CleanTextures();
 
 	void SetTexture(std::vector<std::pair<TextureSlot, Texture*>>& data);
 

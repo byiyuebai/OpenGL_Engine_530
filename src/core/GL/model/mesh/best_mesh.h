@@ -7,6 +7,7 @@
 #include "VertexBufferLayout.h"
 #include <glm/glm.hpp>
 class Shader;
+
 struct Vertex {
 	glm::vec3 Position;
 	glm::vec3 Normal;
@@ -41,6 +42,7 @@ public:
 	VertexBuffer* GetVBO() const { return VBO; }
 	ElementBuffer* GetEBO() const { return EBO; }
 
+	Mesh() = default;
 	virtual ~Mesh() = default;
 
 	virtual void Draw(Shader& shader) = 0;
@@ -51,6 +53,8 @@ protected:
 	VertexArray* VAO = nullptr;
 	VertexBuffer* VBO = nullptr;
 	ElementBuffer* EBO = nullptr;
+
+	bool isLoadToGPU = false;
 private:
 
 };

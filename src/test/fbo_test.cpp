@@ -219,7 +219,6 @@ void Test::FBOTest::processBlockRemoval() {
         chunk->buildMeshVertex();
     }
 }
-
 void Test::FBOTest::processBlockPlacement() {
     if (block_cd <= 0.2f) {
         block_cd += deltatime;
@@ -285,15 +284,14 @@ void Test::FBOTest::updateViewUniforms() {
     UBO_View0->Bind();
     UBO_View0->SetData(0, sizeof(glm::mat4), glm::value_ptr(camera->getView()));
     UBO_View0->BindRangeToBindingPoint(1, 0, sizeof(glm::mat4));
+
     UBO_View0->ConnectBlockToBindingPoint(lineShader->getID(), "View", 1);
 
     // 更新仅旋转的视图矩阵 (绑定点 2)
     UBO_View1->Bind();
-    UBO_View1->SetData(0, sizeof(glm::mat4),
-        glm::value_ptr(glm::mat4(glm::mat3(camera->getView()))));
+    UBO_View1->SetData(0, sizeof(glm::mat4),glm::value_ptr(glm::mat4(glm::mat3(camera->getView()))));
     UBO_View1->BindRangeToBindingPoint(2, 0, sizeof(glm::mat4));
 
-    // 连接到各着色器
     UBO_View1->ConnectBlockToBindingPoint(chunkShader->getID(), "View", 2);
     UBO_View1->ConnectBlockToBindingPoint(transparentShader_a->getID(), "View", 2);
     UBO_View1->ConnectBlockToBindingPoint(transparentShader_r->getID(), "View", 2);
@@ -568,16 +566,4 @@ void Test::FBOTest::updateShaderProjection(const glm::mat4& projection) {
     UBO_Proj->ConnectBlockToBindingPoint(lineShader->getID(), "Proj", 0);
     UBO_Proj->ConnectBlockToBindingPoint(transparentShader_a->getID(), "Proj", 0);
     UBO_Proj->ConnectBlockToBindingPoint(transparentShader_r->getID(), "Proj", 0);
-}
-
-// ==================== 工具函数 ====================
-glm::vec3 getCameraLookAtCenter(Camera* camera) {
-    glm::vec4 screenCenter(0.0f, 0.0f, -1.0f, 1.0f);
-    glm::mat4 invProj = glm::inverse(camera->getProjection());
-    glm::mat4 invView = glm::inverse(camera->getView());
-
-    glm::vec4 worldDir = invView * invProj * screenCenter;
-    worldDir = glm::normalize(worldDir);
-
-    return glm::vec3(worldDir.x, worldDir.y, worldDir.z);
 }

@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Texture.h"
+#include "Texture_base.h"
 #include "AtlasMipmap.h"
 #include <glm/glm.hpp>
 #include <unordered_map>
+#include <string>
 class TextureAtlas :public Texture {
 private:
 	glm::ivec2 tileCount;
@@ -26,5 +27,7 @@ public:
 	glm::dvec2 getUvPxSize() const { return uvPxSize; }
 
 	AtlasMipmap* getMipmap() const { return mipmap; }
-
+protected:
+	std::string path;
+	TextureType type = TextureType::opaque;
 };

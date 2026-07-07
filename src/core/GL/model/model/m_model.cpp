@@ -16,7 +16,6 @@
 #include <m_mesh.h>
 #include <Shader.h>
 #include <string>
-#include <Texture.h>
 #include <vector>
 static glm::mat4 aiMat4ToGlmMat4(const aiMatrix4x4& aiMat) {
 	glm::mat4 glmMat = glm::mat4(0.0f);

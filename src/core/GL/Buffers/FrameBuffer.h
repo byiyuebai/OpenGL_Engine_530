@@ -19,6 +19,7 @@ private:
 	// 深度附件
 	Texture* m_DepthTexture;
 	bool m_HasDepthTexture;
+
 	// 深度 RBO（如果使用 RBO 形式的深度附件）
 	unsigned int m_DepthRBO;
 	bool m_HasDepthRBO;

@@ -26,12 +26,62 @@ World::World(int seed, glm::dvec3 cameraPos)
 
 World::~World()
 {
+	Clean();
 }
 
 void World::Clean()
 {
-}
+	stopThread = true;
 
+	// 2. 唤醒所有等待的线程
+	createCV.notify_all();
+	BiuldMeshCV.notify_all();
+
+	// 3. 等待所有线程结束
+	for (auto& thread : CreateThreads) {
+		if (thread.joinable()) {
+			thread.join();
+		}
+	}
+
+	for (auto& thread : BiuldMeshThread) {
+		if (thread.joinable()) {
+			thread.join();
+		}
+	}
+
+	// 4. 清理所有区块
+	{
+		std::lock_guard<std::mutex> lock(chunksMutex);
+		for (auto& pair : chunks) {
+			delete pair.second;
+		}
+		chunks.clear();
+	}
+
+	// 5. 清理队列
+	{
+		std::lock_guard<std::mutex> lock(createMutex);
+		while (!chunkCreateQueue.empty()) {
+			chunkCreateQueue.pop();
+		}
+		chunkCreateSet.clear();
+	}
+
+	{
+		std::lock_guard<std::mutex> lock(biuldMeshMutex);
+		while (!chunkBiuldMeshDataQueue.empty()) {
+			chunkBiuldMeshDataQueue.pop();
+		}
+	}
+
+	{
+		std::lock_guard<std::mutex> lock(meshUpdateMutex);
+		while (!chunkMeshUpdateQueue.empty()) {
+			chunkMeshUpdateQueue.pop();
+		}
+	}
+}
 void World::Draw(Shader& shader, glm::dvec3 cameraPos)
 {
 	// 加锁，复制一份渲染列表

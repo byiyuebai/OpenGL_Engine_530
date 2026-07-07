@@ -3,7 +3,6 @@ VertexBuffer::VertexBuffer(const void* data, unsigned int size, int gl_type) {
 	glGenBuffers(1, &VBO_ID);
 	Bind();
 	glBufferData(GL_ARRAY_BUFFER, size, data, gl_type);
-	//glBufferStorage(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_STORAGE_BIT);
 
 	max_size = size;
 }
@@ -66,56 +65,3 @@ void VertexBuffer::Expand(unsigned int expand_size, int gl_type)
 	// 恢复绑定当前VBO
 	Bind();
 }
-
-//void VertexBuffer::Expand(unsigned int expand_size, int gl_type)
-//{
-//	if (!expand_size) return;
-//
-//	Bind(); // 绑定当前 VBO（ID 不变）
-//	unsigned int old_size = max_size;
-//	unsigned int new_size = old_size + expand_size;
-//
-//	// ---------------------------
-//	// 第一步：创建临时 staging 缓冲
-//	// ---------------------------
-//	GLuint staging;
-//	glGenBuffers(1, &staging);
-//	glBindBuffer(GL_COPY_WRITE_BUFFER, staging);
-//	glBufferData(GL_COPY_WRITE_BUFFER, old_size, nullptr, GL_STATIC_COPY);
-//
-//	// ---------------------------
-//	// 第二步：GPU 内部拷贝旧数据到临时缓冲
-//	// ---------------------------
-//	glBindBuffer(GL_COPY_READ_BUFFER, VBO_ID); // 读当前VBO
-//	glCopyBufferSubData(
-//		GL_COPY_READ_BUFFER,
-//		GL_COPY_WRITE_BUFFER,
-//		0, 0,          // 偏移都从0开始
-//		old_size        // 拷贝全部旧数据
-//	);
-//
-//	// ---------------------------
-//	// 第三步：原地重新分配更大空间（ID 不变）
-//	// ---------------------------
-//	glBufferData(GL_ARRAY_BUFFER, new_size, nullptr, gl_type);
-//
-//	// ---------------------------
-//	// 第四步：把旧数据拷回新空间
-//	// ---------------------------
-//	glCopyBufferSubData(
-//		GL_COPY_WRITE_BUFFER,
-//		GL_COPY_READ_BUFFER,
-//		0, 0,
-//		old_size
-//	);
-//
-//	// ---------------------------
-//	// 清理临时缓冲
-//	// ---------------------------
-//	glDeleteBuffers(1, &staging);
-//	glBindBuffer(GL_COPY_READ_BUFFER, 0);
-//	glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-//
-//	// 更新大小
-//	max_size = new_size;
-//}

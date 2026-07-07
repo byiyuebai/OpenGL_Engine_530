@@ -2,7 +2,6 @@
 #include "Renderer.h"
 #include "texture_manager.h"
 Mesh_2D::Mesh_2D(std::vector<Vertex2D>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures) {
-	this->vertices = vertices;
 	this->indices = indices;
 
 	if (!textures.empty()) {
@@ -14,7 +13,7 @@ Mesh_2D::Mesh_2D(std::vector<Vertex2D>& vertices, std::vector<unsigned int>& ind
 	type = MeshType::Vertex2D;
 
 	VAO = new VertexArray();
-	VBO = new VertexBuffer(this->vertices.data(), this->vertices.size() * sizeof(Vertex2D));
+	VBO = new VertexBuffer(vertices.data(), vertices.size() * sizeof(Vertex2D));
 	EBO = new ElementBuffer(this->indices.data(), this->indices.size());
 	VertexBufferLayout* layout = new VertexBufferLayout();
 	layout->Push<float>(2);
@@ -42,11 +41,4 @@ void Mesh_2D::Clean(){
 	delete VAO;
 	delete VBO;
 	delete EBO;
-}
-
-void Mesh_2D::CleanTextures()
-{
-	for (int i = 0; i < textures.size(); i++) {
-		TextureManager::getInstance()->unloadTexture(textures[i]->getPath());
-	}
 }
