@@ -15,7 +15,7 @@ struct TextureSpec
 	int width = -1;
 	int height = -1;
 
-	GLenum internalFormat = GL_RGBA;
+	GLenum internalFormat = GL_RGBA8;
 	GLenum format = GL_RGBA;
 
 	GLenum type = GL_UNSIGNED_BYTE;

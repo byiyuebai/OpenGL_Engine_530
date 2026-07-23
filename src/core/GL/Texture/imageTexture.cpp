@@ -8,8 +8,25 @@
 ImageTexture::ImageTexture(const std::string path, TextureType type)
 	: Texture(), path(path), type(type)
 {
-	spec.width = -1;
-	spec.height = -1;
+	{
+		spec.width = -1;
+		spec.height = -1;
+
+		spec.internalFormat = GL_RGBA8;
+		spec.format = GL_RGBA;
+
+		spec.type = GL_UNSIGNED_BYTE;
+
+		spec.minFilter = GL_NEAREST_MIPMAP_LINEAR;
+		spec.magFilter = GL_NEAREST;
+
+		spec.wrapS = GL_REPEAT;
+		spec.wrapT = GL_REPEAT;
+
+		spec.baseLevel = 0;
+		spec.maxLevel = 4;
+	}
+
 
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load(path.c_str(), &spec.width, &spec.height, &nrChannels, 0);
@@ -25,6 +42,7 @@ ImageTexture::ImageTexture(const std::string path, TextureType type)
 		return;
 	}
 	loadToGPU(data);
+	stbi_image_free(data);
 }
 
 ImageTexture::~ImageTexture(){
@@ -35,9 +53,9 @@ ImageTexture::~ImageTexture(){
 void ImageTexture::loadToGPU(unsigned char* data)
 {
 	if (isLoadGPU) {
+		std::cout << "[INFO] [ImageTexture]纹理已加载到GPU" << std::endl;
 		return;
 	}
-
 	Texture::bind();
 
 	/*环绕模式
@@ -49,8 +67,8 @@ void ImageTexture::loadToGPU(unsigned char* data)
 	- GL_CLAMP_TO_EDGE（夹紧到边缘）
 	- GL_CLAMP_TO_BORDER（夹紧到边界颜色）
 	- GL_MIRROR_CLAMP_TO_EDGE（OpenGL 4.4+）*/
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, spec.wrapS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, spec.wrapT);
 
 	/*mipmap
 	GL_TEXTURE_BASE_LEVEL	mipmap 基础层级（起始层）	非负整数（默认 0）
@@ -58,8 +76,8 @@ void ImageTexture::loadToGPU(unsigned char* data)
 	GL_TEXTURE_LOD_BIAS	mipmap 层级偏移（需用 glTexParameterf）	浮点值（默认 0.0）
 	GL_TEXTURE_MIN_LOD	最小 LOD（层级细节）	浮点值（需用 glTexParameterf，默认 -1000）
 	GL_TEXTURE_MAX_LOD	最大 LOD	浮点值（需用 glTexParameterf，默认 1000）*/
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 4);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, spec.baseLevel);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, spec.maxLevel);
 
 	/*纹理过滤
 	- GL_NEAREST（最近点过滤）
@@ -69,8 +87,8 @@ void ImageTexture::loadToGPU(unsigned char* data)
 	- GL_NEAREST_MIPMAP_LINEAR（最近点 mipmap 线性过滤）
 	- GL_LINEAR_MIPMAP_LINEAR（线性 mipmap 线性过滤）
 	*/
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, spec.minFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, spec.magFilter);
 
 	//// 各向异性过滤
 	//GLfloat maxAnisotropy;
@@ -93,7 +111,7 @@ void ImageTexture::loadToGPU(unsigned char* data)
 		internalFormat = GL_RGBA8;
 	}
 	// 上传图像数据
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, spec.width, spec.height, 0, format, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, spec.width, spec.height, 0, format, spec.type, data);
 	// 自动生成 mipmap
 	glGenerateMipmap(GL_TEXTURE_2D);
 

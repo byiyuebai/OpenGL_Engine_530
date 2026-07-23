@@ -87,3 +87,11 @@ void AtlasMipmap::setPixel(unsigned char* data, glm::ivec2 size, int channels, i
 AtlasMipmap::~AtlasMipmap()
 {
 }
+
+void AtlasMipmap::CleanMipData()
+{
+	// 清理 mipData 中的所有层级数据，除了第 0 层 应该在外部使用stbi_image_free释放
+    for (int i =1; i < mipData.size(); ++i) {
+        delete[] mipData[i];
+    }
+}

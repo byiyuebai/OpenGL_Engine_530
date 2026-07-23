@@ -10,6 +10,11 @@ UniformBuffer::UniformBuffer(unsigned int size, int gl_type)
 	UnBind();
 }
 
+UniformBuffer::~UniformBuffer()
+{
+	Clean();
+}
+
 void UniformBuffer::Bind() const
 {
 	glBindBuffer(GL_UNIFORM_BUFFER, UBO_ID);

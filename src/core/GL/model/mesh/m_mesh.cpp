@@ -21,7 +21,7 @@ M_Mesh::M_Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices
 	VAO->AddBuffer(*VBO, *EBO, layout);
 }
 
-M_Mesh::~M_Mesh() {}
+M_Mesh::~M_Mesh() { Clean(); }
 
 void M_Mesh::Draw(Shader& shader) {
 	Renderer* renderer = &Renderer::Instance();

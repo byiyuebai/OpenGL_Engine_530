@@ -15,7 +15,7 @@ L_Mesh::L_Mesh(std::vector<LineVertex>& lineVertices, std::vector<unsigned int>&
 	VAO->AddBuffer(*VBO, *EBO, *layout);
 }
 
-L_Mesh::~L_Mesh(){}
+L_Mesh::~L_Mesh() { Clean(); }
 
 void L_Mesh::Draw(Shader& shader)
 {

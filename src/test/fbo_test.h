@@ -44,11 +44,7 @@ namespace Test {
         void updateViewUniforms();
         void GuiRender();
 
-        void renderCrosshair();
 
-        void renderSettingsWindow();
-
-        void renderDebugWindow();
 
         void setBlockAtCamera(const std::string& blockName);
 
@@ -111,5 +107,9 @@ namespace Test {
         void renderAccumulationPass();      // 渲染累积通道
         void renderRevealagePass();         // 渲染揭示度通道
         void renderCompositePass();         // 最终合成阶段
+
+        void renderCrosshair();
+        void renderSettingsWindow();
+        void renderDebugWindow();
     };
 }

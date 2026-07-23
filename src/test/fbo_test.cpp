@@ -84,9 +84,29 @@ Test::FBOTest::FBOTest(GLFWwindow* window)
 
 // ==================== 析构函数 ====================
 Test::FBOTest::~FBOTest() {
-	delete mesh_line;
-	delete world;
 	GLFWCallbackManager::GetInstance().SetFramebufferCallback(nullptr);
+	glFinish();
+
+	delete camera;
+
+	delete UBO_Proj;
+	delete UBO_View0;
+	delete UBO_View1;
+
+	delete lineShader;
+	delete chunkShader;
+	delete transparentShader_a;
+	delete transparentShader_r;
+	delete compositeShader;
+
+	delete opaqueFBO;
+	delete transparentFBO;
+
+	delete quadMesh;
+	delete mesh_line;
+	delete triangleMesh;
+
+	delete world;
 }
 
 // ==================== 初始化辅助函数 ====================
@@ -189,7 +209,9 @@ void Test::FBOTest::update(double deltatime) {
 	// 处理方块交互
 	processBlockRemoval();
 	processBlockPlacement();
-
+	if (InputManager::GetInstance().IsKeyPressed(KeyCode::F)) {
+		isback = true;
+	}
 	// 更新世界
 	world->update(deltatime, camera->getPos());
 }
@@ -267,7 +289,7 @@ void Test::FBOTest::processBlockPlacement() {
 // ==================== 渲染 ====================
 void Test::FBOTest::Render() {
 	Renderer* renderer = &Renderer::Instance();
-	renderer->SetPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//renderer->SetPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// 更新视图矩阵 Uniform Buffers
 	updateViewUniforms();
 
@@ -276,7 +298,7 @@ void Test::FBOTest::Render() {
 
 	// 渲染透明阶段
 	renderTransparentPass();
-	renderer->SetPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//renderer->SetPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	// 最终合成
 	renderCompositePass();
 }
@@ -445,7 +467,7 @@ void Test::FBOTest::renderCompositePass() {
 void Test::FBOTest::GuiRender() {
 	renderCrosshair();
 	renderSettingsWindow();
-	renderDebugWindow();
+	//renderDebugWindow();
 }
 
 void Test::FBOTest::renderCrosshair() {

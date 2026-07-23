@@ -22,7 +22,7 @@ Mesh_2D::Mesh_2D(std::vector<Vertex2D>& vertices, std::vector<unsigned int>& ind
 }
 
 
-Mesh_2D::~Mesh_2D() {}
+Mesh_2D::~Mesh_2D() { Clean(); }
 
 void Mesh_2D::Draw(Shader& shader) {
 	Renderer* renderer = &Renderer::Instance();
